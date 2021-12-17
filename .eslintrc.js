@@ -42,7 +42,6 @@ module.exports = {
         allowExpressions: true,
       },
     ],
-    'max-len': ['warn', { code: 80 }],
     'react/function-component-definition': [
       2,
       {
