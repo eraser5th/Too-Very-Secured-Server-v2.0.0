@@ -43,6 +43,13 @@ module.exports = {
       },
     ],
     'max-len': ['warn', { code: 80 }],
+    'react/function-component-definition': [
+      2,
+      {
+        namedComponents: 'arrow-function',
+        unnamedComponents: 'arrow-function',
+      },
+    ],
   },
   settings: {
     'import/resolver': {
