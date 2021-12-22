@@ -1,0 +1,10 @@
+:root {
+  --theme-primary: #0d6efd;
+  --theme-secondary: #6c757d;
+  --theme-success: #198754;
+  --theme-info: #0dcaf0;
+  --theme-warning: #ffc107;
+  --theme-danger: #dc3545;
+  --theme-light: #f8f9fa;
+  --theme-dark: #212529;
+}
