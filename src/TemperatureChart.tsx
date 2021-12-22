@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  Area, AreaChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis,
+  Area, AreaChart, Brush, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis,
 } from 'recharts';
 import { TemperatureRes } from './Charts';
 
@@ -16,10 +16,21 @@ type temperatureData = {
 }
 
 const parseTempData = (dataList: TemperatureRes): temperatureData[] => {
-  console.log('parseTempData', dataList);
   if (!dataList) return [];
 
-  return dataList
+  let thinOutedDataList: TemperatureRes = [];
+
+  if (dataList.length > 200) {
+    for (let i = 0; i < dataList.length; i += Math.floor(dataList.length / 200)) {
+      thinOutedDataList.push(dataList[i]);
+    }
+  } else {
+    thinOutedDataList = dataList;
+  }
+
+  console.log('temp data length', thinOutedDataList.length);
+
+  return thinOutedDataList
     .sort((a, b) => a.time - b.time)
     .map((data) => ({
       time: new Date(
@@ -37,7 +48,7 @@ const TemperatureChart: React.VFC<TemperatureChartProps> = (
   <ResponsiveContainer height={240} className="graph">
     <AreaChart
       data={parseTempData(tempDataList)}
-      syncId="anyId"
+      syncId="temperatureGraph"
       margin={{
         left: 20,
         right: 20,
@@ -51,7 +62,14 @@ const TemperatureChart: React.VFC<TemperatureChartProps> = (
       </defs>
       <CartesianGrid stroke="#666666" strokeDasharray="3 3" />
       <XAxis dataKey="time" />
-      <YAxis dataKey="temperature" />
+      <YAxis
+        dataKey="temperature"
+        domain={[
+          Math.floor(Math.min(...tempDataList.map((n) => n.temperature))),
+          Math.ceil(Math.max(...tempDataList.map((n) => n.temperature))),
+        ]}
+
+      />
       <Tooltip />
       <Legend verticalAlign="top" wrapperStyle={{ lineHeight: '40px' }} />
       <Area
