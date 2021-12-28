@@ -37,7 +37,7 @@ const parseData = (dataList: DataType[]): DataLists => {
   dataList
     .sort((a, b) => a.timestamp - b.timestamp)
     .forEach((data) => {
-      const time = (new Date(data.timestamp)).toTimeString();
+      const time = (new Date(data.timestamp + 9 * 60 * 60 * 1000)).toUTCString();
       tempDataList.push({ time, temperature: data.temperature });
       humidityDataList.push({ time, humidity: data.humidity });
       pressureDataList.push({ time, pressure: data.pressure });
