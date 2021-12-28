@@ -5,15 +5,14 @@ import Charts from './Charts';
 
 const Home: React.VFC = () => (
   <div className="graphs">
-    <Charts initialBrisData={[]} initialTempsData={[]} />
+    <Charts />
   </div>
 );
 
 const App: React.VFC = () => (
   <div className="App">
     <div className="contents">
-      <h1 className="title">Welcome to Too Very Secured WebSite!</h1>
-      <p className="sub-title">Let&lsquo;s look Monopoly&lsquo;s room data!!</p>
+      <h1 className="title">Welcome to UBIC!</h1>
       <Routes>
         <Route path="/" element={<Home />} />
       </Routes>

@@ -1,77 +1,90 @@
 import React, { useState, useEffect } from 'react';
-import BrightnessChart from './BrightnessChart';
-import TemperatureChart from './TemperatureChart';
+import Chart from './Chart';
 import './charts.css';
 
-export type TemperatureRes = {
-  temperature: number,
-  time: number,
-}[]
-
-export type BrightnessRes = {
-  brightness: number,
-  time: number,
-}[]
-
-const fetchTemp = async (): Promise<TemperatureRes> => {
-  let json: TemperatureRes = [];
-  try {
-    const res = await fetch('https://lunabbit.ddns.net/temperatures');
-    json = await res.json();
-    return json;
-  } catch (error) {
-    console.log('fetch temp', error);
-  }
-  return json;
-};
-
-const fetchBri = async (): Promise<BrightnessRes> => {
-  let json: BrightnessRes = [];
-  try {
-    const res = await fetch('https://lunabbit.ddns.net/brightnesses');
-    json = await res.json();
-    return json;
-  } catch (error) {
-    console.log('fetch bri', error);
-  }
-  return json;
-};
-
-type ChartsProps = {
-  initialTempsData: TemperatureRes,
-  initialBrisData: BrightnessRes,
+type DataLists = {
+  tempDataList: temperatureData[],
+  humidityDataList: humidityData[],
+  pressureDataList: pressureData[]
 }
 
-const Charts: React.VFC<ChartsProps> = ({ initialBrisData, initialTempsData }) => {
-  const [TemperaturesData, setTempsData] = useState<TemperatureRes>(initialTempsData);
-  const [BrightnessesData, setBrisData] = useState<BrightnessRes>(initialBrisData);
+type temperatureData = {
+  time: string,
+  temperature: number,
+}
+
+type DataType = {
+  timestamp: number,
+  humidity: number,
+  pressure: number,
+  temperature: number,
+}
+
+type humidityData = {
+  time: string,
+  humidity: number,
+}
+
+type pressureData = {
+  time: string,
+  pressure: number,
+}
+
+const parseData = (dataList: DataType[]): DataLists => {
+  const tempDataList: temperatureData[] = [];
+  const humidityDataList: humidityData[] = [];
+  const pressureDataList: pressureData[] = [];
+  dataList
+    .sort((a, b) => a.timestamp - b.timestamp)
+    .forEach((data) => {
+      const time = (new Date(data.timestamp)).toTimeString();
+      tempDataList.push({ time, temperature: data.temperature });
+      humidityDataList.push({ time, humidity: data.humidity });
+      pressureDataList.push({ time, pressure: data.pressure });
+    });
+  return { tempDataList, humidityDataList, pressureDataList };
+};
+
+const fetchData = async (): Promise<DataLists> => {
+  let json: DataType[] = [];
+  try {
+    const res = await fetch('https://script.google.com/macros/s/AKfycbx6RPKHP5zFBQRs29BhQlCtjb8mR6tnW365fBuNzijJGeOPdfF5upLHU36swc8VBX6c/exec?req=data');
+    json = await res.json();
+    console.log(json);
+  } catch (error) {
+    console.log('fetch data', error);
+  }
+  return parseData(json);
+};
+
+const Charts: React.VFC = () => {
+  const [dataLists, setDataLists] = useState<DataLists>({
+    tempDataList: [],
+    humidityDataList: [],
+    pressureDataList: [],
+  });
 
   useEffect(() => {
     const set = async (): Promise<void> => {
-      setTempsData(await fetchTemp());
-      setBrisData(await fetchBri());
+      setDataLists(await fetchData());
     };
     set();
   }, []);
 
   useEffect(() => {
     const interval = setInterval(async () => {
-      const tempResData = await fetchTemp();
-      const briResData = await fetchBri();
-      if (tempResData[tempResData.length - 1] !== TemperaturesData[TemperaturesData.length - 1]) {
-        setTempsData(tempResData);
-      }
-      setBrisData(briResData);
-    }, 10000);
+      setDataLists(await fetchData());
+    }, 60000);
     return () => {
       clearInterval(interval);
     };
-  }, [TemperaturesData, BrightnessesData]);
+  }, [dataLists]);
 
   return (
     <div>
-      <TemperatureChart tempDataList={TemperaturesData} />
-      <BrightnessChart briDataList={BrightnessesData} />
+      <Chart.TemperatureChart dataList={dataLists.tempDataList} />
+      <Chart.HumidityChart dataList={dataLists.humidityDataList} />
+      <Chart.PressureChart dataList={dataLists.pressureDataList} />
     </div>
   );
 };
