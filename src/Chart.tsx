@@ -48,7 +48,7 @@ const TemperatureChart: React.VFC<{
         ]}
 
       />
-      <Tooltip />
+      <Tooltip contentStyle={{ backgroundColor: '#77777799' }} wrapperStyle={{ backgroundColor: '#777777799' }} />
       <Legend verticalAlign="top" wrapperStyle={{ lineHeight: '40px' }} />
       <Area
         type="monotone"
@@ -93,7 +93,7 @@ const HumidityChart: React.VFC<{
         ]}
 
       />
-      <Tooltip />
+      <Tooltip contentStyle={{ backgroundColor: '#77777799' }} wrapperStyle={{ backgroundColor: '#777777799' }} />
       <Legend verticalAlign="top" wrapperStyle={{ lineHeight: '40px' }} />
       <Area
         type="monotone"
@@ -138,7 +138,7 @@ const PressureChart: React.VFC<{
         ]}
 
       />
-      <Tooltip />
+      <Tooltip contentStyle={{ backgroundColor: '#77777799' }} wrapperStyle={{ backgroundColor: '#777777799' }} />
       <Legend verticalAlign="top" wrapperStyle={{ lineHeight: '40px' }} />
       <Area
         type="monotone"
